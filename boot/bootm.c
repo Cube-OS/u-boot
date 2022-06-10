@@ -32,6 +32,7 @@
 #include <command.h>
 #include <bootm.h>
 #include <image.h>
+#include <cubeos.h>
 
 #ifndef CONFIG_SYS_BOOTM_LEN
 /* use 8MByte as default max gunzip size */
@@ -697,6 +698,26 @@ int do_bootm_states(struct cmd_tbl *cmdtp, int flag, int argc,
 
 	images->state |= states;
 
+#ifdef CONFIG_UPDATES_CUBEOS
+	/* Check the boot counter. If it's too high, we need to try and recover */
+	unsigned long bootcount = bootcount_load();
+	if(bootcount > 2)
+	{
+		/*
+		 * If the bootlimit has been reached, then we're trying to execute the
+		 * alternate boot logic. It's entirely possible that we're still using
+		 * a `bootm` command to load an alternate OS, so don't automatically
+		 * fall into the recovery logic
+		 */
+		unsigned long bootlimit = getenv_ulong("bootlimit", 10, 0);
+		if(bootcount <= bootlimit) {
+			ret = BOOTM_ERR_OTHER;
+			printf("ERROR: Failed to boot too many times, triggering recovery\n");
+			goto err;
+		}
+	}
+#endif
+
 	/*
 	 * Work through the states and see how far we get. We stop on
 	 * any error.
@@ -746,7 +767,8 @@ int do_bootm_states(struct cmd_tbl *cmdtp, int flag, int argc,
 
 	/* From now on, we need the OS boot function */
 	if (ret)
-		return ret;
+		/*return ret;*/
+		goto err;
 	boot_fn = bootm_os_get_boot_func(images->os.os);
 	need_boot_fn = states & (BOOTM_STATE_OS_CMDLINE |
 			BOOTM_STATE_OS_BD_T | BOOTM_STATE_OS_PREP |
@@ -808,6 +830,63 @@ err:
 		bootstage_error(BOOTSTAGE_ID_DECOMP_UNIMPL);
 	else if (ret == BOOTM_ERR_RESET)
 		do_reset(cmdtp, flag, argc, argv);
+
+#ifdef CONFIG_UPDATE_CUBEOS
+	/*
+	 * If boot fails, do one of several things:
+	 * If this is the first time, try reloading the current version of KubOS Linux
+	 */
+	if (getenv_yesno(KUBOS_CURR_TRIED) == 0)
+	{
+		printf("Boot failed. Reloading current OS\n");
+		setenv(KUBOS_UPDATE_FILE, getenv(KUBOS_CURR_VERSION));
+		if (update_kubos(KUBOS_RECOVER) == KUBOS_OK_REBOOT)
+		{
+			do_reset(cmdtp, flag, argc, argv);
+		}
+
+		setenv(KUBOS_CURR_TRIED, "1");
+		setenv(KUBOS_UPDATE_FILE, "none");
+		saveenv();
+	}
+
+	/*
+	 * If that fails, or this is not our first time here, check if there's something
+	 * to rollback to and try to roll back to it. This can be a) a previous version,
+	 * and/or b) the base KubOS version.
+	 * (If the current version is already the base version of KubOS, then there's
+	 * nothing to roll back to)
+	 */
+	if (strcmp(getenv(KUBOS_CURR_VERSION), KUBOS_BASE) != 0)
+	{
+		printf("Boot failed. Reloading previous OS\n");
+		setenv(KUBOS_UPDATE_FILE, getenv(KUBOS_PREV_VERSION));
+		if (update_kubos(KUBOS_RECOVER) == KUBOS_OK_REBOOT)
+		{
+			do_reset(cmdtp, flag, argc, argv);
+		}
+
+		printf("Boot failed. Reloading base OS\n");
+		setenv(KUBOS_UPDATE_FILE, KUBOS_BASE);
+		if (update_kubos(KUBOS_RECOVER) == KUBOS_OK_REBOOT)
+		{
+			do_reset(cmdtp, flag, argc, argv);
+		}
+
+		/* Save that we tried the base version so that we won't try again later */
+		setenv(KUBOS_CURR_VERSION, KUBOS_BASE);
+		setenv(KUBOS_UPDATE_FILE, "none");
+		saveenv();
+	}
+
+	/*
+	 * If That fails, give up. We'll reset the system so that the bootlimit checker
+	 * can track the failure and run the altbootcmd instead, if it's available.
+	 */
+	printf("Boot failed. No rollback could be completed\n");
+	do_reset(cmdtp, flag, argc, argv);
+
+#endif
 
 	return ret;
 }

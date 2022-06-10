@@ -9,9 +9,9 @@
 
 void bootcount_store(ulong a)
 {
-	int upgrade_available = env_get_ulong("upgrade_available", 10, 0);
+	int recovery_available = env_get_ulong("recovery_available", 10, 0);
 
-	if (upgrade_available) {
+	if (recovery_available) {
 		env_set_ulong("bootcount", a);
 		env_save();
 	}
@@ -19,10 +19,10 @@ void bootcount_store(ulong a)
 
 ulong bootcount_load(void)
 {
-	int upgrade_available = env_get_ulong("upgrade_available", 10, 0);
+	int recovery_available = env_get_ulong("recovery_available", 10, 0);
 	ulong val = 0;
 
-	if (upgrade_available)
+	if (recovery_available)
 		val = env_get_ulong("bootcount", 10, 0);
 
 	return val;

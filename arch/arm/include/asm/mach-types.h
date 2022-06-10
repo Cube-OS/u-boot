@@ -1606,7 +1606,7 @@
 #define MACH_TYPE_UNIT2P               1622
 #define MACH_TYPE_INC20OTTER           1623
 #define MACH_TYPE_AT91SAM9G20EK        1624
-#define MACH_TYPE_STORCENTER           1625
+#define MACH_TYPE_AT91SAM9G20ISIS      1625
 #define MACH_TYPE_SMDK6410             1626
 #define MACH_TYPE_U300                 1627
 #define MACH_TYPE_U500                 1628

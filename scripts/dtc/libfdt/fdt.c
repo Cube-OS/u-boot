@@ -82,7 +82,9 @@ size_t fdt_header_size(const void *fdt)
 int fdt_check_header(const void *fdt)
 {
 	size_t hdrsize;
-
+	if (fdt == NULL) {
+		return -FDT_ERR_BADOFFSET;
+	}
 	if (fdt_magic(fdt) != FDT_MAGIC)
 		return -FDT_ERR_BADMAGIC;
 	if (fdt_chk_version()) {

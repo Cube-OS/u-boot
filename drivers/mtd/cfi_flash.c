@@ -1409,6 +1409,11 @@ int write_buff(flash_info_t *info, uchar *src, ulong addr, ulong cnt)
 #else
 	while (cnt >= info->portwidth) {
 		cword.w32 = 0;
+#ifdef CONFIG_AT91SAM9G20ISIS
+		WATCHDOG_RESET_COUNT(5000);
+#else
+		WATCHDOG_RESET();
+#endif		
 		for (i = 0; i < info->portwidth; i++)
 			flash_add_byte(info, &cword, *src++);
 		rc = flash_write_cfiword(info, wp, cword);

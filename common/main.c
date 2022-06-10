@@ -17,6 +17,7 @@
 #include <net.h>
 #include <version_string.h>
 #include <efi_loader.h>
+#include <cubeos.h>
 
 static void run_preboot_environment_command(void)
 {
@@ -53,6 +54,20 @@ void main_loop(void)
 
 	if (IS_ENABLED(CONFIG_UPDATE_TFTP))
 		update_tftp(0UL, NULL, NULL);
+	
+	if (IS_ENABLED(CONFIG_UPDATE_CUBEOS))
+		if (update_cubeos(CUBEOS_UPGRADE) != CUBEOS_ERR_NO_REBOOT)
+		{
+			/* 
+			* If everything went well, we want to reboot into the new
+			* files.  The watchdog gets tripped if we try to boot the
+			* new kernel from here, so we reboot instead.
+			*
+			* If everything didn't go well but we still hit this line,
+			* it means we want to reboot and re-attempt the upgrade
+			*/
+			do_reset(NULL, 0, 0, NULL);
+		}
 
 	if (IS_ENABLED(CONFIG_EFI_CAPSULE_ON_DISK_EARLY)) {
 		/* efi_init_early() already called */

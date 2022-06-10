@@ -80,6 +80,11 @@ struct nand_internal_data {
 	unsigned int ubi;
 };
 
+struct nor_internal_data {
+	u64 start;
+	u64 size;
+};
+
 struct ram_internal_data {
 	unsigned long	start;
 	unsigned int	size;
@@ -119,6 +124,7 @@ struct dfu_entity {
 		struct mmc_internal_data mmc;
 		struct mtd_internal_data mtd;
 		struct nand_internal_data nand;
+		struct nor_internal_data nor;
 		struct ram_internal_data ram;
 		struct sf_internal_data sf;
 		struct virt_internal_data virt;
@@ -455,6 +461,18 @@ static inline int dfu_fill_entity_nand(struct dfu_entity *dfu, char *devstr,
 				       char **argv, int argc)
 {
 	puts("NAND support not available!\n");
+	return -1;
+}
+#endif
+
+#if CONFIG_DFU_NOR
+extern int dfu_fill_entity_nor(struct dfu_entity *dfu, char *devstr,
+				char *s);
+#else
+static inline int dfu_fill_entity_nor(struct dfu_entity *dfu, char *devstr,
+				       char *s)
+{
+	puts("NOR support not available!\n");
 	return -1;
 }
 #endif

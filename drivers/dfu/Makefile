@@ -7,6 +7,7 @@ obj-$(CONFIG_$(SPL_)DFU) += dfu.o
 obj-$(CONFIG_$(SPL_)DFU_MMC) += dfu_mmc.o
 obj-$(CONFIG_$(SPL_)DFU_MTD) += dfu_mtd.o
 obj-$(CONFIG_$(SPL_)DFU_NAND) += dfu_nand.o
+obj-$(CONFIG_$(SPL_)DFU_NAND) += dfu_nor.o
 obj-$(CONFIG_$(SPL_)DFU_RAM) += dfu_ram.o
 obj-$(CONFIG_$(SPL_)DFU_SF) += dfu_sf.o
 obj-$(CONFIG_$(SPL_)DFU_WRITE_ALT) += dfu_alt.o

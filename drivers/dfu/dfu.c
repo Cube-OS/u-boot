@@ -538,6 +538,9 @@ static int dfu_fill_entity(struct dfu_entity *dfu, char *s, int alt,
 	} else if (strcmp(interface, "nand") == 0) {
 		if (dfu_fill_entity_nand(dfu, devstr, argv, argc))
 			return -1;
+	} else if (strcmp(interface, "nor") == 0) {
+		if (dfu_fill_entity_nand(dfu, devstr, argv, argc))
+			return -1;
 	} else if (strcmp(interface, "ram") == 0) {
 		if (dfu_fill_entity_ram(dfu, devstr, argv, argc))
 			return -1;
@@ -641,7 +644,7 @@ int dfu_config_entities(char *env, char *interface, char *devstr)
 
 const char *dfu_get_dev_type(enum dfu_device_type t)
 {
-	const char *const dev_t[] = {NULL, "eMMC", "OneNAND", "NAND", "RAM",
+	const char *const dev_t[] = {NULL, "eMMC", "OneNAND", "NAND", "NOR", "RAM",
 				     "SF", "MTD", "VIRT"};
 	return dev_t[t];
 }

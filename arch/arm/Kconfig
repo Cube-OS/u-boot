@@ -613,6 +613,24 @@ choice
 	prompt "Target select"
 	default TARGET_HIKEY
 
+config TARGET_BEAGLEBONE_BLACK
+	bool "Support Beaglebone Black with KubOS Linux"
+	select CPU_V7
+	select SUPPORT_SPL
+	select DM
+	select DM_SERIAL
+	select DM_GPIO
+	select TI_I2C_BOARD_DETECT
+
+config TARGET_PUMPKIN_MBM2
+	bool "Support Pumpkin MBM2"
+	select CPU_V7
+	select SUPPORT_SPL
+	select DM
+	select DM_SERIAL
+	select DM_GPIO
+	select TI_I2C_BOARD_DETECT
+
 config ARCH_AT91
 	bool "Atmel AT91"
 	select GPIO_EXTRA_HEADER
@@ -2332,6 +2350,8 @@ source "board/hisilicon/hikey/Kconfig"
 source "board/hisilicon/hikey960/Kconfig"
 source "board/hisilicon/poplar/Kconfig"
 source "board/isee/igep003x/Kconfig"
+source "board/cubeos/pumpkin-mbm2/Kconfig"
+source "board/cubeos/beaglebone-black/Kconfig"
 source "board/kontron/sl28/Kconfig"
 source "board/myir/mys_6ulx/Kconfig"
 source "board/seeed/npi_imx6ull/Kconfig"

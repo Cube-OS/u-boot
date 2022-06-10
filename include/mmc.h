@@ -936,6 +936,7 @@ void mmc_set_preinit(struct mmc *mmc, int preinit);
 #define mmc_dev(x)	((x)->dev)
 
 void board_mmc_power_init(void);
+void board_isis_mmc_power_init(struct mmc *mmc);
 int board_mmc_init(struct bd_info *bis);
 int cpu_mmc_init(struct bd_info *bis);
 int mmc_get_env_addr(struct mmc *mmc, int copy, u32 *env_addr);
@@ -943,6 +944,9 @@ int mmc_get_env_addr(struct mmc *mmc, int copy, u32 *env_addr);
 extern uint mmc_get_env_part(struct mmc *mmc);
 # endif
 int mmc_get_env_dev(void);
+#ifdef CONFIG_SD_SWITCH
+int set_mmc_slot(uint8_t slot);
+#endif
 
 /* Minimum partition switch timeout in units of 10-milliseconds */
 #define MMC_MIN_PART_SWITCH_TIME	30 /* 300 ms */

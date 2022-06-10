@@ -595,6 +595,28 @@ static int do_mmc_dev(struct cmd_tbl *cmdtp, int flag,
 	return CMD_RET_SUCCESS;
 }
 
+#ifdef CONFIG_SD_SWITCH
+static int do_mmc_slot(cmd_tbl_t *cmdtp, int flag,
+              int argc, char * const argv[])
+{
+    uint8_t slot = argv[1][0];
+
+    if(slot != '0' && slot != '1')
+    {
+        return CMD_RET_USAGE;
+    }
+
+    if(set_mmc_slot(slot) != 0)
+    {
+        printf("Failed to set SD slot\n");
+        return CMD_RET_FAILURE;
+    }
+
+    printf("Booting SD card slot has been updated. In order for these changes to take effect, the system must be rebooted\n");
+    return CMD_RET_SUCCESS;
+}
+#endif
+
 static int do_mmc_list(struct cmd_tbl *cmdtp, int flag,
 		       int argc, char *const argv[])
 {
@@ -1094,6 +1116,9 @@ static struct cmd_tbl cmd_mmc[] = {
 #ifdef CONFIG_CMD_BKOPS_ENABLE
 	U_BOOT_CMD_MKENT(bkops-enable, 2, 0, do_mmc_bkops_enable, "", ""),
 #endif
+#ifdef CONFIG_SD_SWITCH
+	U_BOOT_CMD_MKENT(slot, 2, 0, do_mmc_slot, "", ""),
+#endif
 };
 
 static int do_mmcops(struct cmd_tbl *cmdtp, int flag, int argc,
@@ -1175,6 +1200,9 @@ U_BOOT_CMD(
 #ifdef CONFIG_CMD_BKOPS_ENABLE
 	"mmc bkops-enable <dev> - enable background operations handshake on device\n"
 	"   WARNING: This is a write-once setting.\n"
+#endif
+#ifdef CONFIG_SD_SWITCH
+	"mmc slot <0|1> - set SD slot to boot from (requires reboot)\n"
 #endif
 	);
 

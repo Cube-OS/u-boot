@@ -1900,6 +1900,12 @@ config CMD_RTC
 	help
 	  Enable the 'rtc' command for low-level access to RTC devices.
 
+config CMD_FITUPD
+	bool "fitupd"
+	depends on UPDATE_CUBEOS || DFU_TFTP
+	help
+	  Run update from FIT image or TFTP address
+
 config CMD_TIME
 	bool "time"
 	help
