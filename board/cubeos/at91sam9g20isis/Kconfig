@@ -9,4 +9,10 @@ config SYS_VENDOR
 config SYS_CONFIG_NAME
 	default "at91sam9g20isis"
 
+config SYS_TEXT_BASE
+	default 0x00000000
+
+config SYS_LOAD_ADDR
+	default 0x22000000
+
 endif
