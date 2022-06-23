@@ -15,4 +15,8 @@ config SYS_TEXT_BASE
 config SYS_LOAD_ADDR
 	default 0x22000000
 
+config AT91SAM9G20ISIS
+
+config GENERIC_MMC
+
 endif
