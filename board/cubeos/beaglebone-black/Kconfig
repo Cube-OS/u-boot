@@ -1,10 +1,9 @@
 if TARGET_BEAGLEBONE_BLACK
 
-imply SPL_ENV_SUPPORT
-
-imply SPL_WATCHDOG_SUPPORT
-
-imply SPL_YMODEM_SUPPORT
+config SPL
+	imply SPL_ENV_SUPPORT
+	imply SPL_WATCHDOG_SUPPORT
+	imply SPL_YMODEM_SUPPORT
 
 config SYS_BOARD
 	default "beaglebone-black"
