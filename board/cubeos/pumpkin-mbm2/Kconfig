@@ -1,5 +1,11 @@
 if TARGET_PUMPKIN_MBM2
 
+imply SPL_ENV_SUPPORT
+
+imply SPL_WATCHDOG_SUPPORT
+
+imply SPL_YMODEM_SUPPORT
+
 config SYS_BOARD
 	default "pumpkin-mbm2"
 
@@ -21,15 +27,6 @@ config CONS_INDEX
 	  in documentation, etc) available to it.  Depending on your specific
 	  board you may want something other than UART0 as for example the IDK
 	  uses UART3 so enter 4 here.
-
-config SPL_ENV_SUPPORT
-	default y
-
-config SPL_WATCHDOG_SUPPORT
-	default y
-
-config SPL_YMODEM_SUPPORT
-	default y
 
 source "board/ti/common/Kconfig"
 
